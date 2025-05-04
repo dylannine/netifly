@@ -1,13 +1,23 @@
 {
-  "name": "netlify-server",
+  "name": "netifly-server",
   "version": "1.0.0",
-  "main": "netlify/functions/server.js",
+  "description": "Server untuk aplikasi Netifly dengan fungsionalitas chat, session, dan admin",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "build": "echo 'no build needed'"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "express": "^4.18.2",
-    "bcrypt": "^5.1.0",
-    "socket.io": "^4.5.0"
-  }
+    "express-session": "^1.17.3",
+    "http": "0.0.1",
+    "socket.io": "^4.5.1"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "",
+  "license": "ISC"
 }
