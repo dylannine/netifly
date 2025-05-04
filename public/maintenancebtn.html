@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f4f4f4; }
+    button { padding: 10px 20px; font-size: 16px; margin-right: 10px; }
+    #status { font-weight: bold; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Admin Panel - Maintenance Mode</h1>
+  <button onclick="setMaintenance(true)">Aktifkan Maintenance</button>
+  <button onclick="setMaintenance(false)">Nonaktifkan Maintenance</button>
+  <p id="status">Status: Memuat...</p>
+
+  <script>
+    async function setMaintenance(state) {
+      try {
+        const res = await fetch('/admin/maintenance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enabled: state })
+        });
+
+        const text = await res.text();
+        alert(text);
+        loadStatus();
+      } catch (err) {
+        alert('Gagal mengatur maintenance.');
+      }
+    }
+
+    async function loadStatus() {
+      try {
+        const res = await fetch('/status/maintenance');
+        const { enabled } = await res.json();
+        document.getElementById('status').textContent = `Status: ${enabled ? 'Aktif' : 'Nonaktif'}`;
+      } catch {
+        document.getElementById('status').textContent = 'Status: Tidak tersedia';
+      }
+    }
+
+    loadStatus();
+  </script>
+</body>
+</html>

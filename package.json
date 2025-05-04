@@ -1,0 +1,20 @@
+{
+  "name": "netlify-serverless-backend",
+  "version": "1.0.0",
+  "dependencies": {
+    "bcrypt": "^5.1.0"
+  }
+}
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^2.2.0",
+    "connect-mongo": "^5.1.0",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "socket.io": "^4.8.1"
+  }
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Admin</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 8px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h2>Login Admin</h2>
+  <form id="loginForm">
+    <label>Username:</label>
+    <input type="text" id="username" required>
+    <label>Password:</label>
+    <input type="password" id="password" required>
+    <button type="submit">Login</button>
+  </form>
+  <p id="message" class="error"></p>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+          // Jika server mengirim role, cek di sini:
+          if (result.role === 'admin') {
+            alert('Login admin berhasil!');
+            window.location.href = '/admin.html'; // ganti sesuai file dashboard admin Anda
+          } else {
+            alert('Login berhasil, tapi Anda bukan admin.');
+            // Bisa diarahkan ke user dashboard jika ada
+          }
+        } else {
+          document.getElementById('message').textContent = result.message || 'Login gagal.';
+        }
+      } catch (err) {
+        document.getElementById('message').textContent = 'Terjadi kesalahan.';
+      }
+    });
+  </script>
+</body>
+</html>

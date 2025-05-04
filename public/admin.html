@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-5xl mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-4">Admin Dashboard</h1>
+
+    <div class="mb-6">
+      <button onclick="loadUsers()" class="px-4 py-2 bg-blue-600 text-white rounded mr-2">Users</button>
+      <button onclick="loadTopics()" class="px-4 py-2 bg-green-600 text-white rounded">Topics</button>
+    </div>
+
+    <!-- USER PANEL -->
+    <div id="user-panel" class="hidden">
+      <h2 class="text-xl font-semibold mb-2">Users</h2>
+      <form onsubmit="addUser(event)" class="flex gap-2 mb-4">
+        <input type="text" id="new-username" placeholder="Username" class="border p-2 rounded w-1/4" required />
+        <input type="password" id="new-password" placeholder="Password" class="border p-2 rounded w-1/4" required />
+        <select id="new-role" class="border p-2 rounded w-1/4">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+        <button class="bg-blue-500 text-white px-4 py-2 rounded">Add</button>
+      </form>
+      <table class="w-full border border-gray-300">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="p-2">Username</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="user-list"></tbody>
+      </table>
+    </div>
+    
+    <!-- Maintenance Toggle -->
+<a href="maintenancebtn.html" class="btn" id="forumBtn">Masuk Forum</a>
+</div>
+
+    <!-- TOPIC PANEL -->
+    <div id="topic-panel" class="hidden">
+      <h2 class="text-xl font-semibold mb-2">Topics</h2>
+      <form onsubmit="addTopic(event)" class="flex gap-2 mb-4">
+        <input type="text" id="topic-title" placeholder="Title" class="border p-2 rounded w-1/3" required />
+        <input type="text" id="topic-content" placeholder="Content" class="border p-2 rounded w-1/2" required />
+        <button class="bg-green-500 text-white px-4 py-2 rounded">Add</button>
+      </form>
+      <ul id="topic-list" class="space-y-2"></ul>
+    </div>
+  </div>
+
+  <script>        
+    async function loadUsers() {
+      togglePanel('user-panel');
+      const res = await fetch('/admin/users');
+      const users = await res.json();
+      const tbody = document.getElementById('user-list');
+      tbody.innerHTML = '';
+      users.forEach(user => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="p-2 border">${user.username}</td>
+          <td class="p-2 border">${user.role}</td>
+          <td class="p-2 border">${user.banned ? 'Banned' : 'Active'}</td>
+          <td class="p-2 border">
+            <button onclick="banUser('${user.username}')" class="text-red-600">Ban</button>
+            <button onclick="deleteUser('${user.username}')" class="ml-2 text-red-600">Delete</button>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function addUser(e) {
+      e.preventDefault();
+      const username = document.getElementById('new-username').value;
+      const password = document.getElementById('new-password').value;
+      const role = document.getElementById('new-role').value;
+      const res = await fetch('/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password, role })
+      });
+      if (res.ok) loadUsers();
+      else alert(await res.text());
+    }
+
+    async function banUser(username) {
+      const ok = confirm(`Ban ${username}?`);
+      if (!ok) return;
+      await fetch(`/admin/users/${username}/ban`, { method: 'PUT' });
+      loadUsers();
+    }
+
+    async function deleteUser(username) {
+      const ok = confirm(`Hapus user ${username}?`);
+      if (!ok) return;
+      await fetch(`/admin/users/${username}`, { method: 'DELETE' });
+      loadUsers();
+    }
+
+    async function loadTopics() {
+      togglePanel('topic-panel');
+      const res = await fetch('/admin/topics');
+      const topics = await res.json();
+      const list = document.getElementById('topic-list');
+      list.innerHTML = '';
+      topics.forEach((t, i) => {
+        const li = document.createElement('li');
+        li.className = 'bg-white p-4 rounded shadow flex justify-between items-center';
+        li.innerHTML = `
+          <div>
+            <h3 class="font-semibold">${t.title}</h3>
+            <p>${t.content}</p>
+          </div>
+          <button onclick="deleteTopic(${i})" class="text-red-600">Delete</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    async function addTopic(e) {
+      e.preventDefault();
+      const title = document.getElementById('topic-title').value;
+      const content = document.getElementById('topic-content').value;
+      const res = await fetch('/admin/topics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content })
+      });
+      if (res.ok) loadTopics();
+      else alert(await res.text());
+    }
+
+    async function deleteTopic(index) {
+      const ok = confirm('Hapus topik ini?');
+      if (!ok) return;
+      await fetch(`/admin/topics/${index}`, { method: 'DELETE' });
+      loadTopics();
+    }
+
+    function togglePanel(panelId) {
+      document.getElementById('user-panel').classList.add('hidden');
+      document.getElementById('topic-panel').classList.add('hidden');
+      document.getElementById(panelId).classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>

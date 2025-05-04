@@ -1,0 +1,14 @@
+{
+  "admin": {
+    "id": "202505123",
+    "password": "$2b$10$LoQbUS5xd4.kJEPkRQ2ScO/n1Ye4E9bNGISz/7v5RfCSKpNRzRXXC",
+    "role": "admin",
+    "banned": false
+  },
+  "ya": {
+    "id": "202505163",
+    "password": "$2b$10$MOr5enrVbkSvTEx66Bau4uBI3pOd9z5lVbgAczB816RWkwKW1pyaW",
+    "role": "admin",
+    "banned": false
+  }
+}
